@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="public/styles.css" />
+    <title>Home</title>
+  </head>
+
+  <body>
+    <%currentpage='home'%> <%username=user_data.fname%> <%-
+    include("partials/header.ejs")%>
+
+    <div class="container col-xxl-8 px-4 py-5">
+      <div class="row flex-lg-row-reverse align-items-center g-5 py-3">
+        <div class="col-10 col-sm-8 col-lg-6">
+          <img
+            src="public/Designer (4).png"
+            class="d-block mx-lg-auto img-fluid"
+            alt="Welcome Image"
+            width="700"
+            height="500"
+            loading="lazy"
+          />
+        </div>
+        <div class="col-lg-6">
+          <h1
+            class="display-5 fw-bold text-body-emphasis lh-1 mb-3 welcome-msg-title"
+          >
+            Welcome to myLibrary
+          </h1>
+          <p class="lead">
+            In a world of endless stories, we offer a refuge for book lovers
+            like you. Explore our shelves to uncover new adventures, revisit
+            beloved classics, and connect with fellow readers. With every book
+            finding its perfect nook here, myLibrary becomes your personal
+            sanctuary for literary exploration. Join us in celebrating the magic
+            of storytelling, where every page turned is a journey taken and
+            every story shared is a connection made. Welcome to myLibrary – Your
+            oasis in the vast landscape of literature.
+          </p>
+          <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+            <a
+              href="/add_book_details"
+              class="btn btn-outline-light"
+              role="button"
+              >Add a New Book</a
+            >
+            <a href="/bookchat" class="btn btn-outline-light" role="button"
+              >BookChat</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="album py-5 bg-body-tertiary">
+      <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+          <%const noOfBooks=book_data.length%>
+          <%for(var i=0;i<noOfBooks;i++){%>
+          <div class="col">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <p class="card-text" style="text-align: center;"><%=book_data[i].bname%></p>
+                <p class="card-text" style="text-align: end;">- <%=book_data[i].author%></p>
+                <p class="card-text">ISBN : <%=book_data[i].isbn%></p>
+                <p class="card-text">RATING : <%=book_data[i].rating%>/5</p>
+                <p class="card-text" style="text-align: justify;">
+                  <%=book_data[i].aigentext%>
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="btn-group">
+                    <form action="/viewBookSelection" method="POST">
+                      <button
+                        name="ISBN"
+                        type="submit"
+                        value="<%=book_data[i].isbn%>"
+                        class="btn btn-sm btn-outline-secondary view-select-button"
+                      >
+                        View
+                      </button>
+                    </form>
+                    <form action="/editBookSelection" method="POST">
+                      <button
+                        name="ISBN"
+                        type="submit"
+                        value="<%=book_data[i].isbn%>"
+                        class="btn btn-sm btn-outline-secondary edit-select-button"
+                      >
+                        Edit
+                      </button>
+                    </form>
+                  </div>
+
+                  <%//date splitting
+                    // Step 1: Parse the Date String
+                    const date = new Date(book_data[i].readdate);
+                    // Step 2: Format the Date
+                    const formattedDate = date.toISOString().split('T')[0];%>
+
+                  <small class="text-body-secondary"><%=formattedDate%></small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <%}%>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    >
+    </script>
+  </body>
+</html>

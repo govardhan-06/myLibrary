@@ -1,0 +1,56 @@
+/*Header*/
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    color: white;
+    background-color: rgb(210, 179, 0);
+}
+.nav{
+    --bs-nav-link-color: white;
+}
+.website-logo{
+    padding-right: 2rem;
+}
+
+/*Sign-up & Sign-in*/
+.alternate-option{
+    text-align: right;
+}
+.consent{
+    text-align: center;
+}
+
+/*Message*/
+.message-box{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*Home & View Book Details*/
+.welcome-msg-title{
+    text-align: center;
+}
+.view-select-button,.edit-select-button{
+    margin-right: 1rem;
+}
+
+/*Form highlighter*/
+.form-control:focus, .form-select:focus {
+    border-color: gold;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px gold;
+}
+
+/*Add Book Details & BookChat*/
+.AddBookButton{
+    padding-top: 1rem;
+    padding-right: 0.5rem;
+}
+
+.rating-button{
+    min-height: 3.5rem;
+}
+
+.chatWithGeminiButton{
+    padding-top: 1rem;
+    padding-right: 0.5rem;
+    padding-bottom: 1rem;
+}
