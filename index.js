@@ -29,6 +29,7 @@ app.use(
       saveUninitialized: true,
     })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -78,7 +79,7 @@ app.post("/signup", async (req, res) => {
             );
             const user = result.rows[0];
             req.login(user, async (err) => {
-              current_userid=req.user.userid;
+              current_userid=parseInt(req.user.userid);
               res.redirect("/home");
             });
           }
@@ -104,10 +105,10 @@ app.post(
 app.post("/signout", (req, res) => {
   req.logout(function (err) {
     if (err) {
-      return next(err);
-    }
-    res.redirect("/");
-  });
+    return next(err);
+  }
+  res.redirect("/");
+});
 });
 
 //Home page
@@ -125,7 +126,6 @@ app.get("/home", async(req,res)=>{
 });
 app.post("/editBookSelection", async(req,res)=>{
   if(req.isAuthenticated()){
-    console.log(req.body.ISBN);
     book_data=await db.query("SELECT * FROM books WHERE userid=$1 AND isbn=$2",[current_userid,req.body.ISBN]);
     book_data=book_data.rows;
     //date splitting
@@ -224,7 +224,6 @@ app.post("/addBook",async(req,res)=>{
     }catch(error){
         console.log(error);
     }
-    current_userid='1';
     
     try {
         await db.query("INSERT INTO books(userid,isbn,bname,author,rating,aigentext,notes,readdate) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",[current_userid,isbn,bname,author,rating,aigentext,notes,dateOfRead]);
@@ -251,7 +250,6 @@ app.get("/edit_book_details",(req,res)=>{
 
 app.post("/editBook",async (req,res)=>{
   if(req.isAuthenticated()){
-    current_userid='1';
     const date=req.body.year+"-"+req.body.month+"-"+req.body.day;
     var aigentext='';
     try{
@@ -287,7 +285,6 @@ app.get("/delete_book_details",(req,res)=>{
 });
 app.post("/deleteBook",async (req,res)=>{
   if(req.isAuthenticated()){
-    current_userid=1;
     await db.query("DELETE FROM books WHERE userid=$1 AND isbn=$2",[current_userid,req.body.isbn], async (err)=>{
     if(err){
       console.log("Deletion failed");
@@ -369,27 +366,16 @@ passport.use(
         const result = await db.query("SELECT * FROM users WHERE email = $1 ", [
           username,
         ]);
-
-        console.log(username);
-        console.log(result.rows);
-
-
         if (result.rows.length > 0) {
           const user = result.rows[0];
           const storedHashedPassword = user.password;
-
-          
-          console.log(storedHashedPassword);
-          console.log("User : ");
-          console.log(password);
-
-
           bcrypt.compare(password, storedHashedPassword, (err, valid) => {
             if (err) {
               console.error("Error comparing passwords:", err);
               return cb(err);
             } else {
               if (valid) {
+                current_userid=user.userid;
                 return cb(null, user);
               } else {
                 return cb(null, false);
@@ -397,10 +383,11 @@ passport.use(
             }
           });
         } else {
-          return cb("User not found");
+          return cb(null,false);
         }
       } catch (err) {
         console.log(err);
+        return cb(err);
       }
     })
   );
