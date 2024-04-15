@@ -1,5 +1,4 @@
 import express from "express";
-import axios from "axios";
 import bodyParser from "body-parser";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
@@ -79,7 +78,7 @@ app.post("/signup", async (req, res) => {
             );
             const user = result.rows[0];
             req.login(user, async (err) => {
-              console.log(req.user);
+              current_userid=req.user.userid;
               res.redirect("/home");
             });
           }
@@ -114,7 +113,6 @@ app.post("/signout", (req, res) => {
 //Home page
 app.get("/home", async(req,res)=>{
     if(req.isAuthenticated()){
-      current_userid=1;
       user_data=await db.query("SELECT * FROM users WHERE userid=$1",[current_userid]);
       user_data=user_data.rows[0];
       book_data=await db.query("SELECT * FROM books WHERE userid=$1",[current_userid]);
@@ -127,7 +125,6 @@ app.get("/home", async(req,res)=>{
 });
 app.post("/editBookSelection", async(req,res)=>{
   if(req.isAuthenticated()){
-    current_userid='1';
     console.log(req.body.ISBN);
     book_data=await db.query("SELECT * FROM books WHERE userid=$1 AND isbn=$2",[current_userid,req.body.ISBN]);
     book_data=book_data.rows;
@@ -148,7 +145,6 @@ app.post("/editBookSelection", async(req,res)=>{
 });
 app.post("/viewBookSelection",async (req,res)=>{
   if(req.isAuthenticated()){
-    current_userid='1';
     book_data=await db.query("SELECT * FROM books WHERE userid=$1 AND isbn=$2",[current_userid,req.body.ISBN]);
     book_data=book_data.rows;
     //date splitting
@@ -157,18 +153,17 @@ app.post("/viewBookSelection",async (req,res)=>{
     // Step 2: Format the Date
     const formattedDate = date.toISOString().split('T')[0];
     book_data[0].readdate=formattedDate;
-    res.render(__dirname+"/view_book_details.ejs",{user_data,book_data});
+    res.render(__dirname+"/view_book_details.ejs",{book_data});
   }else{
     res.redirect("/sign-in");
   }
 });
 app.post("/deleteBookSelection",async (req,res)=>{
   if(req.isAuthenticated()){
-    current_userid='1';
   book_data=await db.query("SELECT bname,author,isbn FROM books WHERE userid=$1 AND isbn=$2",[current_userid,req.body.ISBN]);
   book_data=book_data.rows[0];
   console.log(book_data);
-  res.render(__dirname+"/delete_book_details.ejs",{user_data,book_data});
+  res.render(__dirname+"/delete_book_details.ejs",{book_data});
   }else{
     res.redirect("/sign-in");
   }
